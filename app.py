@@ -51,9 +51,37 @@ def update_meal(meal_id):
     return jsonify({"message":"Not able to update on current given information."}),400
     
     
+@app.route('/meals/<int:meal_id>', methods=['DELETE'])
+def delete_meal(meal_id):
+    meal = Meals.query.get(meal_id)
+    
+    if meal:
+        db.session.delete(meal) 
+        db.session.commit() 
+        return jsonify({"message": f"Meal deleted successfully."})
+
+    return jsonify({"message": "Meal not found."}), 404
 
 
+@app.route('/meals/<int:meal_id>', methods=['GET'])
+def get_meal(meal_id):
+    meal = Meals.query.get(meal_id)
+    
+    if meal:
+        return jsonify({"Meal information" : meal.to_dict()}) ,200
 
+    return jsonify({"message": "Meal not found."}), 404
+    
+        
+@app.route('/meals/all', methods=['GET'])
+def get_all_meals():     
+    meals = Meals.query.all()
+    if meals :
+        return jsonify(
+            [ meal.to_dict() for meal in meals ]
+        )
+        
+    return jsonify({"message": "Meal not found."}), 404
 
 
 if __name__ == "__main__":
